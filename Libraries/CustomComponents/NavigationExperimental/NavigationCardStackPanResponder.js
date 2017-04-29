@@ -202,7 +202,7 @@ class NavigationCardStackPanResponder extends NavigationAbstractPanResponder {
         distance > DISTANCE_THRESHOLD  ||
         value <= index - POSITION_THRESHOLD
       ) {
-        props.onNavigateBack();
+        this._goBack();
       }
     });
   }
@@ -222,6 +222,23 @@ class NavigationCardStackPanResponder extends NavigationAbstractPanResponder {
         useNativeDriver: props.position.__isNative,
       }
     ).start();
+  }
+
+  _goBack(): void {
+    const props = this._props;
+
+    if (!props.onNavigateBack) {
+      return;
+    }
+
+    Animated.timing(
+      props.position,
+      {
+        toValue: Math.max(props.navigationState.index - 1, 0),
+        duration: ANIMATION_DURATION,
+        useNativeDriver: props.position.__isNative,
+      }
+    ).start(props.onNavigateBack);
   }
 
   _addNativeListener(animatedValue) {
